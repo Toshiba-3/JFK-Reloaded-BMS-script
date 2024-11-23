@@ -1,0 +1,39 @@
+# JFK Reloaded (modified from London Racer script)
+# script for QuickBMS http://quickbms.aluigi.org
+
+idstring "\x34\x12"
+get DUMMY short
+get ZERO long
+get SIZE long
+get FILES long
+get FOLDERS long
+savepos OFFSET
+log MEMORY_FILE10 OFFSET SIZE
+math OFFSET + SIZE
+goto OFFSET
+
+set PATH string ""
+set NAME string ""
+math VALUE = 1
+callfunction EXTRACT
+
+startfunction EXTRACT
+    string PATH + NAME
+    string PATH + /
+    for VALUES = VALUE > 0
+        get NAME_OFF long
+        get VALUE1 long
+        get VALUE2 long
+        get ZERO long
+        goto NAME_OFF MEMORY_FILE10
+        get NAME string MEMORY_FILE10
+        if VALUE2 < 0x83AA
+            math VALUE = VALUE1
+            math VALUE + VALUE2
+            callfunction EXTRACT
+        else
+            string NAME p "%s%s" PATH NAME
+            log NAME VALUE2 VALUE1
+        endif
+    prev VALUES
+endfunction
